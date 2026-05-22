@@ -114,11 +114,12 @@ export function InlineModelSwitcher({
   const apiModelOptions = providerForProtocol?.models ?? [];
 
   // Chip text — keep it tight so the pill doesn't wrap on small viewports.
-  // CLI: "Claude · Sonnet 4.5"; BYOK: "Anthropic · sonnet-4.5".
-  const chipMode =
-    config.mode === 'daemon'
-      ? t('inlineSwitcher.chipCli')
-      : t('inlineSwitcher.chipByok');
+  // Venice Design fork: drop the leading "BYOK" / "CLI" mode label that
+  // upstream renders. The chip icon (link glyph for BYOK, agent icon for
+  // CLI) already conveys mode visually, and on the fork "BYOK · Venice"
+  // is doubly redundant — the only provider configurable here is Venice.
+  // Result: "Venice API · claude-sonnet-4-6" instead of the upstream
+  // "BYOK · Venice API · claude-sonnet-4-6".
   const chipPrimary =
     config.mode === 'daemon'
       ? currentAgent?.name ?? t('inlineSwitcher.noAgent')
@@ -155,10 +156,6 @@ export function InlineModelSwitcher({
           )}
         </span>
         <span className="inline-switcher__chip-text">
-          <span className="inline-switcher__chip-mode">{chipMode}</span>
-          <span className="inline-switcher__chip-sep" aria-hidden="true">
-            ·
-          </span>
           <span className="inline-switcher__chip-primary">{chipPrimary}</span>
           <span className="inline-switcher__chip-sep" aria-hidden="true">
             ·
