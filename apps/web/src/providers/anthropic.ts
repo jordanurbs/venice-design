@@ -17,6 +17,7 @@ import { streamMessageGoogle } from './google-compatible';
 import { streamMessageOllama } from './ollama-compatible';
 import { isOpenAICompatible, streamMessageOpenAI } from './openai-compatible';
 import { streamMessageSenseAudio } from './senseaudio-compatible';
+import { streamMessageVenice } from './venice-compatible';
 
 // Re-export for convenience
 export { isOpenAICompatible } from './openai-compatible';
@@ -61,6 +62,9 @@ export async function streamMessage(
   }
   if (cfg.apiProtocol === 'senseaudio') {
     return streamMessageSenseAudio(cfg, system, history, signal, handlers, context);
+  }
+  if (cfg.apiProtocol === 'venice') {
+    return streamMessageVenice(cfg, system, history, signal, handlers, context);
   }
   if (cfg.apiProtocol === 'openai' || (!cfg.apiProtocol && isOpenAICompatible(cfg.model, cfg.baseUrl))) {
     return streamMessageOpenAI(cfg, system, history, signal, handlers);
