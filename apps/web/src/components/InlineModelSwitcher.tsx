@@ -178,193 +178,53 @@ export function InlineModelSwitcher({
           role="menu"
           data-testid="inline-model-switcher-popover"
         >
+          {/*
+            Venice Design fork — simplified popover.
+            Upstream renders three rows (Mode toggle, Provider pills, Model
+            dropdown) plus the daemon/api branch with agent cards. On this
+            fork the only meaningful pick is the Venice chat model — Mode
+            and Provider are both "Venice" by definition (the fork strips
+            the other API_PROTOCOL_TABS entries, and the popover surface
+            isn't where users opt into Local CLI agents anyway).
+            Power users who DO want Local CLI mode or non-default providers
+            can flip the Mode toggle inside the full Settings dialog via
+            the "Open execution settings" link below — same way upstream
+            users access provider-level config.
+          */}
           <div className="inline-switcher__row">
             <span className="inline-switcher__label">
-              {t('inlineSwitcher.modeLabel')}
+              {t('inlineSwitcher.modelLabel')}
             </span>
-            <div className="inline-switcher__seg" role="tablist">
-              <button
-                type="button"
-                role="tab"
-                aria-selected={config.mode === 'daemon'}
-                className={
-                  'inline-switcher__seg-btn' +
-                  (config.mode === 'daemon' ? ' is-active' : '')
-                }
-                data-testid="inline-model-switcher-mode-daemon"
-                disabled={!daemonLive && config.mode !== 'daemon'}
-                onClick={() => {
-                  // Optional-call so a transient Fast Refresh state where a
-                  // parent has not yet re-rendered with the new prop signature
-                  // does not crash the entire entry view. The same defensive
-                  // pattern is applied to every callback below.
-                  onModeChange?.('daemon');
-                  if (!daemonLive) {
-                    setOpen(false);
-                    onOpenSettings?.('execution');
-                  }
-                }}
-                title={
-                  !daemonLive
-                    ? t('inlineSwitcher.daemonOffline')
-                    : t('inlineSwitcher.useCli')
-                }
+            {apiModelOptions.length > 0 ? (
+              <select
+                className="inline-switcher__select"
+                data-testid="inline-model-switcher-api-model"
+                value={config.model}
+                onChange={(e) => onApiModelChange?.(e.target.value)}
               >
-                {t('inlineSwitcher.chipCli')}
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={config.mode === 'api'}
-                className={
-                  'inline-switcher__seg-btn' +
-                  (config.mode === 'api' ? ' is-active' : '')
-                }
-                data-testid="inline-model-switcher-mode-api"
-                onClick={() => onModeChange?.('api')}
-                title={t('inlineSwitcher.useByok')}
-              >
-                {t('inlineSwitcher.chipByok')}
-              </button>
-            </div>
+                {apiModelOptions.map((id) => (
+                  <option key={id} value={id}>
+                    {id}
+                  </option>
+                ))}
+                {config.model && !apiModelOptions.includes(config.model) ? (
+                  <option value={config.model}>
+                    {config.model} {t('inlineSwitcher.customSuffix')}
+                  </option>
+                ) : null}
+              </select>
+            ) : (
+              <span className="inline-switcher__hint">
+                {t('inlineSwitcher.openSettingsForModel')}
+              </span>
+            )}
           </div>
 
-          {config.mode === 'daemon' ? (
-            <>
-              <div className="inline-switcher__row">
-                <span className="inline-switcher__label">
-                  {t('inlineSwitcher.agentLabel')}
-                </span>
-                {installedAgents.length === 0 ? (
-                  <span className="inline-switcher__hint">
-                    {t('inlineSwitcher.noAgentsDetected')}
-                  </span>
-                ) : (
-                  <div
-                    className="inline-switcher__agent-grid"
-                    role="radiogroup"
-                  >
-                    {installedAgents.map((a) => {
-                      const active = config.agentId === a.id;
-                      return (
-                        <button
-                          key={a.id}
-                          type="button"
-                          role="radio"
-                          aria-checked={active}
-                          className={
-                            'inline-switcher__agent' +
-                            (active ? ' is-active' : '')
-                          }
-                          data-testid={`inline-model-switcher-agent-${a.id}`}
-                          onClick={() => onAgentChange?.(a.id)}
-                          title={a.version ? `${a.name} · ${a.version}` : a.name}
-                        >
-                          <AgentIcon id={a.id} size={20} />
-                          <span className="inline-switcher__agent-name">
-                            {a.name}
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-
-              {currentAgent &&
-              currentAgent.models &&
-              currentAgent.models.length > 0 ? (
-                <div className="inline-switcher__row">
-                  <span className="inline-switcher__label">
-                    {t('inlineSwitcher.modelLabel')}
-                  </span>
-                  <select
-                    className="inline-switcher__select"
-                    data-testid="inline-model-switcher-agent-model"
-                    value={currentModelId ?? ''}
-                    onChange={(e) =>
-                      onAgentModelChange?.(currentAgent.id, {
-                        model: e.target.value,
-                      })
-                    }
-                  >
-                    {renderModelOptions(currentAgent.models)}
-                    {currentModelId &&
-                    !currentAgent.models.some((m) => m.id === currentModelId) ? (
-                      <option value={currentModelId}>
-                        {currentModelId} {t('inlineSwitcher.customSuffix')}
-                      </option>
-                    ) : null}
-                  </select>
-                </div>
-              ) : null}
-            </>
-          ) : (
-            <>
-              <div className="inline-switcher__row">
-                <span className="inline-switcher__label">
-                  {t('inlineSwitcher.providerLabel')}
-                </span>
-                <div className="inline-switcher__chips" role="tablist">
-                  {API_PROTOCOL_TABS.map((tab) => {
-                    const active = apiProtocol === tab.id;
-                    return (
-                      <button
-                        key={tab.id}
-                        type="button"
-                        role="tab"
-                        aria-selected={active}
-                        className={
-                          'inline-switcher__chip-tab' +
-                          (active ? ' is-active' : '')
-                        }
-                        data-testid={`inline-model-switcher-provider-${tab.id}`}
-                        onClick={() => onApiProtocolChange?.(tab.id)}
-                      >
-                        {tab.title}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div className="inline-switcher__row">
-                <span className="inline-switcher__label">
-                  {t('inlineSwitcher.modelLabel')}
-                </span>
-                {apiModelOptions.length > 0 ? (
-                  <select
-                    className="inline-switcher__select"
-                    data-testid="inline-model-switcher-api-model"
-                    value={config.model}
-                    onChange={(e) => onApiModelChange?.(e.target.value)}
-                  >
-                    {apiModelOptions.map((id) => (
-                      <option key={id} value={id}>
-                        {id}
-                      </option>
-                    ))}
-                    {config.model &&
-                    !apiModelOptions.includes(config.model) ? (
-                      <option value={config.model}>
-                        {config.model} {t('inlineSwitcher.customSuffix')}
-                      </option>
-                    ) : null}
-                  </select>
-                ) : (
-                  <span className="inline-switcher__hint">
-                    {t('inlineSwitcher.openSettingsForModel')}
-                  </span>
-                )}
-              </div>
-
-              {!config.apiKey ? (
-                <div className="inline-switcher__warn" role="status">
-                  {t('inlineSwitcher.missingApiKey')}
-                </div>
-              ) : null}
-            </>
-          )}
+          {!config.apiKey ? (
+            <div className="inline-switcher__warn" role="status">
+              {t('inlineSwitcher.missingApiKey')}
+            </div>
+          ) : null}
 
           <button
             type="button"
