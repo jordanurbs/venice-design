@@ -26,7 +26,7 @@ A typical "build me a pitch deck with hero illustrations and a 5-second intro" s
 ### Local
 
 ```bash
-git clone https://github.com/venice-design/venice-design
+git clone https://github.com/jordanurbs/venice-design
 cd venice-design
 pnpm install
 pnpm tools-dev   # daemon + web in dev mode on http://localhost:3000
@@ -39,7 +39,7 @@ Click the deploy button in the README. Paste your key when prompted. Done.
 ### Docker
 
 ```bash
-docker run -e VENICE_API_KEY=… -p 3000:3000 ghcr.io/venice-design/venice-design
+docker run -e VENICE_API_KEY=… -p 3000:3000 ghcr.io/jordanurbs/venice-design
 ```
 
 (Image not yet published — coming soon.)

@@ -4,7 +4,7 @@
 
 > This is a fork of [nexu-io/open-design](https://github.com/nexu-io/open-design) (Apache-2.0). The upstream README is preserved at [`README.upstream.md`](./README.upstream.md). All Venice-specific changes are documented below.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvenice-design%2Fvenice-design&env=VENICE_API_KEY&envDescription=Get%20your%20key%20at%20venice.ai%2Fsettings%2Fapi&envLink=https%3A%2F%2Fvenice.ai%2Fsettings%2Fapi&project-name=venice-design&repository-name=venice-design)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fjordanurbs%2Fvenice-design&env=VENICE_API_KEY&envDescription=Get%20your%20key%20at%20venice.ai%2Fsettings%2Fapi&envLink=https%3A%2F%2Fvenice.ai%2Fsettings%2Fapi&project-name=venice-design&repository-name=venice-design)
 
 ## What it does
 
@@ -34,9 +34,9 @@ The full daemon + skill engine + 71 design systems + sandboxed iframe preview fr
 
 1. Get a Venice API key at [venice.ai/settings/api](https://venice.ai/settings/api). The free tier is enough to try; production usage is metered.
 2. Either:
-   - **Local**: `git clone https://github.com/venice-design/venice-design && cd venice-design && pnpm install && pnpm tools-dev`
+   - **Local**: `git clone https://github.com/jordanurbs/venice-design && cd venice-design && pnpm install && pnpm tools-dev`
    - **Vercel**: click the deploy button above. Paste your key into the `VENICE_API_KEY` env var prompt.
-   - **Self-hosted Docker** (coming soon): `docker run -e VENICE_API_KEY=… -p 3000:3000 ghcr.io/venice-design/venice-design`
+   - **Self-hosted Docker** (coming soon): `docker run -e VENICE_API_KEY=… -p 3000:3000 ghcr.io/jordanurbs/venice-design`
 3. Open `http://localhost:3000` (or your Vercel URL).
 4. The welcome dialog opens with the **Venice tab pre-selected**. Paste your key, accept the default model (`gpt-5`), close the dialog.
 5. Type a brief. Watch it render.
