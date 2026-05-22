@@ -68,4 +68,4 @@ docs/superpowers/
 # on every deploy. Should not be committed (~70MB of PNGs).
 apps/landing-page/public/previews/
 
-growth/**
+growth/**ruvector.db
