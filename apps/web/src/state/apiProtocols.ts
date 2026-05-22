@@ -179,6 +179,11 @@ export const FAST_MODEL_BY_PROTOCOL: Record<ApiProtocol, string> = {
   // variant covers it nicely without exhausting credits on a long chat
   // history. `venice-uncensored` is also available if the user prefers
   // the Venice-native option.
+  //
+  // Must match PROVIDER_DEFAULTS.venice.model in apps/daemon/src/memory-llm.ts
+  // — that's what the daemon's memory-extraction auto-pick actually dials.
+  // MemoryModelInline.tsx renders "Auto · {model}" straight from this
+  // constant, so a mismatch lies to the user about which model is running.
   venice: 'openai-gpt-54-mini',
 };
 

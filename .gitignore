@@ -68,4 +68,8 @@ docs/superpowers/
 # on every deploy. Should not be committed (~70MB of PNGs).
 apps/landing-page/public/previews/
 
-growth/**ruvector.db
+growth/**
+
+# Stray SQLite artifact occasionally written by Cursor's vector-memory
+# extension; not part of the codebase, never useful to commit.
+ruvector.db
