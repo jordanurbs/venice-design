@@ -82,16 +82,27 @@ export const SUGGESTED_MODELS_BY_PROTOCOL: Record<ApiProtocol, readonly string[]
     'MiniMax-M2.7',
   ],
   venice: [
-    // Venice is an OpenAI-compatible inference gateway that exposes text,
-    // image, video, audio, and embedding models under a single API key
-    // (docs.venice.ai). Headline picks first — uncensored Venice-native
-    // model, then the strongest hosted GPT, then Anthropic / Google /
-    // Qwen / DeepSeek / xAI routes that ride the same key.
-    'venice-uncensored',
-    'gpt-5',
-    'gpt-5-mini',
-    'gpt-4o',
+    // Slugs verified live against Venice's /v1/models on 2026-05-22.
+    // Venice uses period-stripped kebab-case for OpenAI models
+    // (`openai-gpt-55` = OpenAI's GPT-5.5; `openai-gpt-54-mini` = 5.4
+    // mini) and unprefixed names for hosted Anthropic / open-source
+    // models. Order is: GPT-5.5 family (the default — strongest tool-
+    // calling on Venice's catalogue today), then Claude headline, then
+    // open-source coders, then the Venice-native uncensored model.
+    'openai-gpt-55',
+    'openai-gpt-55-pro',
+    'openai-gpt-54',
+    'openai-gpt-54-mini',
+    'openai-gpt-54-pro',
+    'openai-gpt-53-codex',
+    'openai-gpt-52',
+    'openai-gpt-4o-2024-11-20',
+    'claude-opus-4-7',
+    'claude-opus-4-7-fast',
+    'claude-opus-4-6',
+    'claude-opus-4-6-fast',
     'claude-opus-4-5',
+    'claude-sonnet-4-6',
     'claude-sonnet-4-5',
     'qwen3-coder-480b',
     'qwen3-235b',
@@ -101,6 +112,7 @@ export const SUGGESTED_MODELS_BY_PROTOCOL: Record<ApiProtocol, readonly string[]
     'grok-4',
     'mistral-31-24b',
     'zai-org-glm-5',
+    'venice-uncensored',
   ],
   ollama: [
     'cogito-2.1:671b',
@@ -161,29 +173,31 @@ export const FAST_MODEL_BY_PROTOCOL: Record<ApiProtocol, string> = {
   // through the Memory model picker.
   ollama: 'gemma3:4b',
   senseaudio: 'senseaudio-s2-flash',
-  // Venice's small/fast tier. `gpt-5-mini` is the cheapest OpenAI-flavoured
-  // pick; `venice-uncensored` is the Venice-native one. Memory extraction
-  // doesn't need bleeding-edge reasoning, so the cheap GPT mini variant
-  // covers it nicely without exhausting credits on a long chat history.
-  venice: 'gpt-5-mini',
+  // Venice's small/fast tier. `openai-gpt-54-mini` is the cheapest OpenAI-
+  // flavoured pick verified on Venice's live /v1/models catalogue. Memory
+  // extraction doesn't need bleeding-edge reasoning, so the small GPT
+  // variant covers it nicely without exhausting credits on a long chat
+  // history. `venice-uncensored` is also available if the user prefers
+  // the Venice-native option.
+  venice: 'openai-gpt-54-mini',
 };
 
+// Venice Design fork — Settings → BYOK only exposes Venice. One Venice
+// API key covers chat (GPT, Claude, Qwen, Llama, DeepSeek, Grok, Mistral,
+// GLM, venice-uncensored) + image + video + audio behind one OpenAI-
+// compatible gateway, so there's no reason to surface the upstream "pick
+// a provider" tab strip.
+//
+// Power users who still need a non-Venice backend can fall back to the
+// daemon CLI agents (Claude Code / Codex / Cursor Agent / etc.) — those
+// are unchanged from upstream and remain selectable under the Local CLI
+// mode toggle. Or set an env var like ANTHROPIC_API_KEY / OPENAI_API_KEY
+// directly — the daemon still reads them.
 export const API_PROTOCOL_TABS: ReadonlyArray<{
   id: ApiProtocol;
   title: string;
 }> = [
-  // Venice Design fork — Venice is the headline tab so first-run users
-  // see it pre-selected. Upstream open-design orders by provider age
-  // (anthropic first). Order divergence is the entire mechanism by
-  // which the fork brands itself "for Venice users" without touching
-  // any of the underlying provider logic.
   { id: 'venice', title: 'Venice' },
-  { id: 'anthropic', title: 'Anthropic' },
-  { id: 'openai', title: 'OpenAI' },
-  { id: 'azure', title: 'Azure OpenAI' },
-  { id: 'google', title: 'Google Gemini' },
-  { id: 'ollama', title: 'Ollama Cloud' },
-  { id: 'senseaudio', title: 'SenseAudio' },
 ];
 
 export const API_PROTOCOL_LABELS: Record<ApiProtocol, string> = {

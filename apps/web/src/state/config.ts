@@ -60,13 +60,14 @@ export const DEFAULT_CONFIG: AppConfig = {
   mode: 'daemon',
   apiKey: '',
   // Venice Design fork — defaults route through Venice's OpenAI-compatible
-  // gateway so first-run users land directly on the venice tab in Settings
-  // and the new-project picker. Upstream open-design defaults to Anthropic;
-  // we diverge here and only here on the chat-protocol default so the rest
-  // of the project file (preset table, host inference, migration logic)
-  // continues to merge cleanly from upstream.
+  // gateway so first-run users land directly on the Venice key prompt.
+  // `openai-gpt-55` is Venice's exact slug for OpenAI's GPT-5.5 (Venice
+  // strips periods from OpenAI version numbers — see /v1/models). It's
+  // the strongest tool-calling model on Venice's catalogue today, which
+  // matters for the design agent's `generate_image` / `generate_video` /
+  // `generate_speech` tool-injection loop.
   baseUrl: 'https://api.venice.ai/api/v1',
-  model: 'gpt-5',
+  model: 'openai-gpt-55',
   apiProtocol: 'venice',
   apiVersion: '',
   apiProtocolConfigs: {},
@@ -110,190 +111,38 @@ export interface KnownProvider {
 // than fetched dynamically. To add a provider, include a user-facing label, the
 // protocol that determines request routing, the base URL, a default model, and
 // optional provider-specific model choices.
+// Venice Design fork — KNOWN_PROVIDERS is the quick-fill table the
+// Settings dialog renders as a "well-known providers" picker. On the
+// fork we surface only the Venice entry; one Venice key covers all the
+// models the other entries enumerate (Anthropic, OpenAI, Google, Ollama,
+// Minimax, MiMo, SenseAudio, DeepSeek, …). The slug list below is
+// verified against Venice's live /v1/models on 2026-05-22.
+//
+// Note: stripping the other entries from this table does NOT prevent a
+// power user from pointing a custom baseUrl at any provider — the
+// daemon's BYOK proxy routes are unchanged (the fork only re-skins the
+// onboarding surface). It just removes them from the auto-fill UX.
 export const KNOWN_PROVIDERS: KnownProvider[] = [
   {
-    label: 'Anthropic (Claude)',
-    protocol: 'anthropic',
-    baseUrl: 'https://api.anthropic.com',
-    model: 'claude-sonnet-4-5',
-    models: ['claude-sonnet-4-5', 'claude-opus-4-5', 'claude-haiku-4-5'],
-  },
-  {
-    label: 'DeepSeek — Anthropic',
-    protocol: 'anthropic',
-    baseUrl: 'https://api.deepseek.com/anthropic',
-    model: 'deepseek-chat',
-    models: [
-      'deepseek-chat',
-      'deepseek-reasoner',
-      'deepseek-v4-flash',
-      'deepseek-v4-pro',
-    ],
-  },
-  {
-    label: 'MiniMax — Anthropic',
-    protocol: 'anthropic',
-    baseUrl: 'https://api.minimaxi.com/anthropic',
-    model: 'MiniMax-M2.7-highspeed',
-    models: [
-      'MiniMax-M2.7-highspeed',
-      'MiniMax-M2.7',
-      'MiniMax-M2.5-highspeed',
-      'MiniMax-M2.5',
-      'MiniMax-M2.1-highspeed',
-      'MiniMax-M2.1',
-      'MiniMax-M2',
-    ],
-  },
-  {
-    label: 'OpenAI',
-    protocol: 'openai',
-    baseUrl: 'https://api.openai.com/v1',
-    model: 'gpt-4o',
-    models: ['gpt-4o', 'gpt-4o-mini', 'o3', 'o4-mini'],
-  },
-  {
-    label: 'Azure OpenAI',
-    protocol: 'azure',
-    baseUrl: '',
-    model: '',
-    models: [],
-  },
-  {
-    label: 'Google Gemini',
-    protocol: 'google',
-    baseUrl: 'https://generativelanguage.googleapis.com',
-    model: 'gemini-2.0-flash',
-    models: ['gemini-2.0-flash', 'gemini-2.0-flash-lite', 'gemini-1.5-pro', 'gemini-1.5-flash'],
-  },
-  {
-    label: 'DeepSeek — OpenAI',
-    protocol: 'openai',
-    baseUrl: 'https://api.deepseek.com',
-    model: 'deepseek-chat',
-    models: [
-      'deepseek-chat',
-      'deepseek-reasoner',
-      'deepseek-v4-flash',
-      'deepseek-v4-pro',
-    ],
-  },
-  {
-    label: 'MiniMax — OpenAI',
-    protocol: 'openai',
-    baseUrl: 'https://api.minimaxi.com/v1',
-    model: 'MiniMax-M2.7-highspeed',
-    models: [
-      'MiniMax-M2.7-highspeed',
-      'MiniMax-M2.7',
-      'MiniMax-M2.5-highspeed',
-      'MiniMax-M2.5',
-      'MiniMax-M2.1-highspeed',
-      'MiniMax-M2.1',
-      'MiniMax-M2',
-    ],
-  },
-  {
-    label: 'MiMo (Xiaomi) — OpenAI',
-    protocol: 'openai',
-    baseUrl: 'https://token-plan-cn.xiaomimimo.com/v1',
-    model: 'mimo-v2.5-pro',
-    models: ['mimo-v2.5-pro'],
-  },
-  {
-    label: 'Ollama Cloud (managed)',
-    protocol: 'ollama',
-    baseUrl: 'https://ollama.com',
-    model: 'gpt-oss:120b',
-    models: [
-      'cogito-2.1:671b',
-      'deepseek-v3.1:671b',
-      'deepseek-v3.2',
-      'deepseek-v4-flash',
-      'deepseek-v4-pro',
-      'devstral-2:123b',
-      'devstral-small-2:24b',
-      'gemini-3-flash-preview',
-      'gemma3:4b',
-      'gemma3:12b',
-      'gemma3:27b',
-      'gemma4:31b',
-      'glm-4.6',
-      'glm-4.7',
-      'glm-5',
-      'glm-5.1',
-      'gpt-oss:20b',
-      'gpt-oss:120b',
-      'kimi-k2:1t',
-      'kimi-k2-thinking',
-      'kimi-k2.5',
-      'kimi-k2.6',
-      'minimax-m2',
-      'minimax-m2.1',
-      'minimax-m2.5',
-      'minimax-m2.7',
-      'ministral-3:3b',
-      'ministral-3:8b',
-      'ministral-3:14b',
-      'mistral-large-3:675b',
-      'nemotron-3-nano:30b',
-      'nemotron-3-super',
-      'qwen3-coder:480b',
-      'qwen3-coder-next',
-      'qwen3-next:80b',
-      'qwen3-vl:235b',
-      'qwen3-vl:235b-instruct',
-      'qwen3.5:397b',
-      'rnj-1:8b',
-    ],
-  },
-  {
-    label: 'Ollama Self-hosted (local)',
-    protocol: 'ollama',
-    baseUrl: 'http://localhost:11434',
-    model: 'gemma3:4b',
-    models: ['gemma3:4b', 'gemma3:12b', 'gemma3:27b', 'gpt-oss:20b'],
-    requiresApiKey: false,
-  },
-  {
-    label: 'MiMo (Xiaomi) — Anthropic',
-    protocol: 'anthropic',
-    baseUrl: 'https://token-plan-cn.xiaomimimo.com/anthropic',
-    model: 'mimo-v2.5-pro',
-    models: ['mimo-v2.5-pro'],
-  },
-  {
-    label: 'SenseAudio',
-    protocol: 'senseaudio',
-    baseUrl: 'https://api.senseaudio.cn',
-    model: 'senseaudio-s2',
-    models: [
-      'senseaudio-s2',
-      'senseaudio-s2-flash',
-      'deepseek-v4-flash',
-      'deepseek-v4-pro',
-      'glm-5.1',
-      'kimi-k2.6',
-      'MiniMax-M2.7-highspeed',
-      'MiniMax-M2.7',
-    ],
-  },
-  {
-    // Venice is an OpenAI-compatible gateway that fronts 230+ chat, image,
-    // video, and audio models behind one API key (docs.venice.ai). Using the
-    // Venice protocol (not openai) routes through /api/proxy/venice/stream
-    // so the daemon can inject generate_image / generate_video /
-    // generate_speech tools backed by Venice's own media endpoints.
     label: 'Venice',
     protocol: 'venice',
     baseUrl: 'https://api.venice.ai/api/v1',
-    model: 'gpt-5',
+    model: 'openai-gpt-55',
     models: [
-      'venice-uncensored',
-      'gpt-5',
-      'gpt-5-mini',
-      'gpt-4o',
+      'openai-gpt-55',
+      'openai-gpt-55-pro',
+      'openai-gpt-54',
+      'openai-gpt-54-mini',
+      'openai-gpt-54-pro',
+      'openai-gpt-53-codex',
+      'openai-gpt-52',
+      'openai-gpt-4o-2024-11-20',
+      'claude-opus-4-7',
+      'claude-opus-4-7-fast',
+      'claude-opus-4-6',
+      'claude-opus-4-6-fast',
       'claude-opus-4-5',
+      'claude-sonnet-4-6',
       'claude-sonnet-4-5',
       'qwen3-coder-480b',
       'qwen3-235b',
@@ -303,6 +152,7 @@ export const KNOWN_PROVIDERS: KnownProvider[] = [
       'grok-4',
       'mistral-31-24b',
       'zai-org-glm-5',
+      'venice-uncensored',
     ],
   },
 ];

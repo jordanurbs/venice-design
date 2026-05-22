@@ -103,10 +103,11 @@ const IMAGE_TOOL = {
 // gateways in the past.
 // ---------------------------------------------------------------------------
 const CHAT_MODELS = [
-  // OpenAI canonical (the baseline — should never break).
-  'gpt-5',
+  // OpenAI canonical (the baseline — should never break). Slug is
+  // Venice's period-stripped form for OpenAI's GPT-5.5.
+  'openai-gpt-55',
   // Anthropic, translated to OpenAI tool_calls shape by Venice.
-  'claude-opus-4-5',
+  'claude-opus-4-7',
   // Open-source coder model — historically the most likely to emit
   // malformed tool_calls arguments.
   'qwen3-coder-480b',

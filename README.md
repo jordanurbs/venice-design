@@ -14,7 +14,7 @@ A design studio sees your unreleased client briefs, your in-progress brand work,
 - **Optional TEE + E2EE for the sensitive stuff.** Pick a `tee-*` model and your inference runs inside an Intel TDX / NVIDIA Confidential Computing enclave with [cryptographic attestation](https://docs.venice.ai/api-reference/endpoint/tee/attestation) — verifiable proof Venice's own infrastructure cannot see your prompts. `e2ee-*` adds client-side encryption with ephemeral key pairs on top. Strictly stronger guarantees than any other commercial API today.
 - **Uncensored design output.** Design work hits frontier-model refusals constantly (*"in the style of Frank Frazetta"* — refused; *"a Tarantino-style poster"* — refused). Venice's defaults are tuned away from over-cautious refusals without removing the safety floor. `safe_mode` still defaults to on for image gen.
 - **One key, ~230 multimodal models.** Stop juggling OpenAI + Anthropic + ByteDance + xAI + Google + ElevenLabs keys. A single Venice API key drives:
-  - **Chat**: GPT-5 / GPT-5-mini / GPT-4o, Claude Opus 4.5 / 4.6 / 4.7, Qwen3-Coder 480B, Qwen3 235B, Llama 3.1 405B, DeepSeek V4-Pro / R1, Grok-4, Mistral 31-24B, GLM-5, `venice-uncensored`.
+  - **Chat**: GPT-5.5 / 5.5-pro / 5.4 / 5.4-mini / 5.4-pro / 5.3-codex / 5.2 / GPT-4o, Claude Opus 4.5 / 4.6 / 4.7 (+ `-fast` variants), Claude Sonnet 4.5 / 4.6, Qwen3-Coder 480B, Qwen3 235B, Llama 3.1 405B, DeepSeek V4-Pro / R1, Grok-4, Mistral 31-24B, GLM-5, `venice-uncensored`.
   - **Image**: `gpt-image-2`, `nano-banana-pro` / `-2`, `qwen-image-2-pro` / `-2` / `-image`, `venice-sd35`, FLUX 2 Pro / Max, Seedream v4 / v5-lite, Recraft v4 Pro, Grok Imagine — plus the full `*-edit` family for inpaint (`qwen-edit`, `gpt-image-2-edit`, `nano-banana-pro-edit`, `flux-2-max-edit`).
   - **Video**: Wan 2.6 (text → video / image → video with native audio), Seedance 2.0 (text / image / reference → video, plus fast tiers), Grok Imagine (with private download URLs for sensitive clips), Topaz video upscale.
   - **Speech**: OpenAI-compatible TTS plus `tts-chatterbox-hd` with voice cloning.
@@ -40,7 +40,7 @@ The upstream Open Design supports 21 providers — including Venice as of [this 
 
 - **Venice is the default and pre-selected** chat protocol on first run.
 - **Settings → BYOK** opens on the Venice tab.
-- **Default model is `gpt-5`** (best general-purpose Venice-hosted model); `venice-uncensored`, Claude Opus, Qwen3-Coder, Llama 3.1 405B, DeepSeek-V4-Pro all available in the dropdown.
+- **Default model is `openai-gpt-55`** (Venice's slug for OpenAI's GPT-5.5 — strongest tool-calling on Venice's catalogue today); `claude-opus-4-7`, `qwen3-coder-480b`, `llama-3.1-405b`, `deepseek-v4-pro`, `venice-uncensored` all available in the dropdown.
 - **Media tabs (image / video / audio) default to Venice models** — `gpt-image-2` for image, `seedance-2-0-text-to-video` for video, `gpt-4o-mini-tts` for speech.
 - **One-click Vercel deploy** with `VENICE_API_KEY` baked into the env-var prompt.
 - **Other 20 providers are still here** — just demoted from the headline. Users who need OpenAI direct, Volcengine, or Grok subscription billing can still configure them.
@@ -55,14 +55,14 @@ The full daemon + skill engine + 71 design systems + sandboxed iframe preview fr
    - **Vercel**: click the deploy button above. Paste your key into the `VENICE_API_KEY` env var prompt.
    - **Self-hosted Docker** (coming soon): `docker run -e VENICE_API_KEY=… -p 3000:3000 ghcr.io/jordanurbs/venice-design`
 3. Open `http://localhost:3000` (or your Vercel URL).
-4. The welcome dialog opens with the **Venice tab pre-selected**. Paste your key, accept the default model (`gpt-5`), close the dialog.
+4. The welcome dialog opens with the **Venice tab pre-selected**. Paste your key, accept the default model (`openai-gpt-55`), close the dialog.
 5. Type a brief. Watch it render.
 
 ## Model catalogue (via Venice)
 
 | Surface | Models you get with one Venice key |
 |---|---|
-| **Chat** | `gpt-5`, `gpt-5-mini`, `gpt-4o`, `claude-opus-4-5`, `claude-sonnet-4-5`, `qwen3-coder-480b`, `qwen3-235b`, `llama-3.1-405b`, `deepseek-v4-pro`, `deepseek-r1`, `grok-4`, `mistral-31-24b`, `zai-org-glm-5`, `venice-uncensored` |
+| **Chat** | `openai-gpt-55`, `openai-gpt-55-pro`, `openai-gpt-54`, `openai-gpt-54-mini`, `openai-gpt-54-pro`, `openai-gpt-53-codex`, `openai-gpt-52`, `openai-gpt-4o-2024-11-20`, `claude-opus-4-7`, `claude-opus-4-7-fast`, `claude-opus-4-6`, `claude-opus-4-5`, `claude-sonnet-4-6`, `claude-sonnet-4-5`, `qwen3-coder-480b`, `qwen3-235b`, `llama-3.1-405b`, `deepseek-v4-pro`, `deepseek-r1`, `grok-4`, `mistral-31-24b`, `zai-org-glm-5`, `venice-uncensored` |
 | **Image (generate)** | `gpt-image-2`, `nano-banana-pro`, `nano-banana-2`, `qwen-image-2-pro`, `qwen-image-2`, `qwen-image`, `venice-sd35`, `flux-2-pro`, `flux-2-max`, `recraft-v4-pro`, `seedream-v5-lite`, `seedream-v4`, `grok-imagine` |
 | **Image (edit/inpaint)** | `qwen-edit`, `flux-2-max-edit`, `nano-banana-pro-edit`, `gpt-image-2-edit` |
 | **Video** | `wan-2.6-{t2v,i2v}`, `wan-2.5-preview-*`, `seedance-2-0-{t2v,i2v,r2v}` + `-fast-*`, `grok-imagine-{t2v,i2v}` + private variants, `topaz-video-upscale` |
@@ -100,7 +100,7 @@ node tests/manual/venice-smoke.mjs
 ```
 
 This exercises:
-1. `/chat/completions` against `gpt-5`, `qwen3-coder-480b`, and `claude-opus-4-5` to verify tool-call accumulator handles OpenAI / open-source / Anthropic-translated streaming shapes.
+1. `/chat/completions` against `openai-gpt-55`, `qwen3-coder-480b`, and `claude-opus-4-7` to verify tool-call accumulator handles OpenAI / open-source / Anthropic-translated streaming shapes.
 2. `/image/generate` against `gpt-image-2` (resolution-tier) and `venice-sd35` (pixel) to confirm both sizing dispatches.
 3. `/video/queue` + `/video/retrieve` against `seedance-2-0-text-to-video` to confirm the async polling loop completes end-to-end against the real Venice API.
 4. `/audio/speech` against `gpt-4o-mini-tts`.

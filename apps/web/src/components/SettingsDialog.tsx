@@ -4841,8 +4841,16 @@ function MediaProvidersSection({
       return next.size === current.size ? current : next;
     });
   }, [cfg.mediaProviders]);
+  // Venice Design fork — Settings → Media providers surfaces only the
+  // Venice card. One Venice key covers image, video, and audio (TTS)
+  // generation — there's no reason to render two dozen alternate
+  // provider cards on a Venice-first onboarding surface. The full
+  // MEDIA_PROVIDERS array is kept intact (the daemon still ships
+  // integrations for OpenAI / Volcengine / Grok / etc.); the
+  // env-var path (`OPENAI_API_KEY`, `ARK_API_KEY`, …) still works for
+  // anyone who really wants to ride a different media provider.
   const visibleProviders = MEDIA_PROVIDERS.filter(
-    (p) => p.settingsVisible !== false,
+    (p) => p.id === 'venice',
   );
   // Split the catalog into two surfaces:
   //   - "Available" — daemon ships a real client, user can paste a key

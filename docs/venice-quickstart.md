@@ -10,7 +10,7 @@ Free tier is enough to try. Production cost reference (May 2026 pricing, subject
 
 | Surface | Approx cost per item |
 |---|---|
-| Chat (gpt-5) | $0.005 per 1K input tokens, $0.015 per 1K output |
+| Chat (openai-gpt-55) | $0.005 per 1K input tokens, $0.015 per 1K output |
 | Chat (qwen3-coder-480b) | $0.0006 per 1K tokens (open-source tier) |
 | Image (gpt-image-2 @ 2K) | $0.04 per image |
 | Image (venice-sd35) | $0.01 per image |
@@ -51,7 +51,7 @@ If you already have upstream `nexu-io/open-design` running and just want to try 
 ## Step 3: first project
 
 1. Open `http://localhost:3000`. The welcome dialog opens with the **Venice tab pre-selected**.
-2. Paste your API key. Accept the default model (`gpt-5`).
+2. Paste your API key. Accept the default model (`openai-gpt-55`).
 3. Click "Get started".
 4. The new-project picker appears. Pick a skill:
    - `magazine-web-ppt` — magazine-style slide deck
@@ -72,14 +72,14 @@ If you already have upstream `nexu-io/open-design` running and just want to try 
 
 ## Step 4: pick the right model per task
 
-The default `gpt-5` works for everything, but you can squeeze more out of specific tasks by picking the right backend:
+The default `openai-gpt-55` works for everything, but you can squeeze more out of specific tasks by picking the right backend:
 
 | Task | Best Venice model |
 |---|---|
-| Long-context design generation (200+ slide deck, complex prototype) | `qwen3-coder-480b` — strongest at structured HTML output |
-| Code-heavy artifacts (interactive React prototype) | `qwen3-coder-480b` or `claude-opus-4-5` |
-| Creative writing / brand voice | `claude-opus-4-5` |
-| Cheap iteration during exploration | `gpt-5-mini` or `qwen3-235b` |
+| Long-context design generation (200+ slide deck, complex prototype) | `claude-sonnet-4-5` (1M context) or `qwen3-coder-480b` (strongest at structured HTML output) |
+| Code-heavy artifacts (interactive React prototype) | `qwen3-coder-480b` or `claude-opus-4-7` |
+| Creative writing / brand voice | `claude-opus-4-7` |
+| Cheap iteration during exploration | `openai-gpt-54-mini` or `qwen3-235b` |
 | Image generation hero art | `gpt-image-2` @ 4K |
 | Image generation infographic / chart | `nano-banana-pro` @ 2K |
 | Image generation typography-heavy | `recraft-v4-pro` |
@@ -104,7 +104,7 @@ VENICE_API_KEY=your_key node tests/manual/venice-smoke.mjs
 ```
 
 It will:
-1. Run a chat completion against `gpt-5`, `qwen3-coder-480b`, and `claude-opus-4-5` — proves tool-call accumulator handles OpenAI / open-source / Anthropic-translated streaming shapes.
+1. Run a chat completion against `openai-gpt-55`, `qwen3-coder-480b`, and `claude-opus-4-7` — proves tool-call accumulator handles OpenAI / open-source / Anthropic-translated streaming shapes.
 2. Generate one image with `gpt-image-2` (resolution-tier sizing) and one with `venice-sd35` (pixel sizing).
 3. Generate a 5-second video with `seedance-2-0-text-to-video` (proves async polling loop).
 4. Generate one second of TTS with `gpt-4o-mini-tts`.
@@ -119,8 +119,8 @@ Expected runtime: 2–4 minutes (mostly the video). Expected cost: ~$0.20.
 | "venice image 401: unauthorized" | Key was revoked or copied incorrectly | Generate a new key at venice.ai/settings/api and re-paste. |
 | "venice image 402: insufficient_balance" | Out of credits | Top up at venice.ai/settings/api or via x402 wallet (see Venice docs). |
 | Video polling times out at ~10 min | 1080p Wan 2.6 + audio job legitimately needs longer | Set `OD_VENICE_VIDEO_MAX_POLL_MS=1200000` (20 min) and restart the daemon. |
-| Tool call returns "tool arguments were not valid JSON" | Open-source model emitted malformed JSON in `arguments` | Switch to `gpt-5` or `claude-opus-4-5` for that turn; the proxy already recovers gracefully. |
-| Chat works but `generate_image` doesn't fire | Model picker is set to a non-tool-calling Venice model | Switch to `gpt-5`, `gpt-5-mini`, `claude-opus-4-5`, or `qwen3-coder-480b`. `venice-uncensored` may not support function-calling. |
+| Tool call returns "tool arguments were not valid JSON" | Open-source model emitted malformed JSON in `arguments` | Switch to `openai-gpt-55` or `claude-opus-4-7` for that turn; the proxy already recovers gracefully. |
+| Chat works but `generate_image` doesn't fire | Model picker is set to a non-tool-calling Venice model | Switch to `openai-gpt-55`, `openai-gpt-54-mini`, `claude-opus-4-7`, or `qwen3-coder-480b`. `venice-uncensored` may not support function-calling. |
 | The agent generates an image but won't embed it | Model misread the tool's instruction | The proxy's `tool_result` message already says "embed with ![](…) markdown"; re-prompt with "show me the image inline" if it still resists. |
 
 ## What's NOT yet ported

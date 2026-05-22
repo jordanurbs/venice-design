@@ -42,20 +42,12 @@ interface Props {
   ) => void;
 }
 
-// Quick-switcher pill list — deliberately a strict subset of the full
-// API_PROTOCOL_TABS exported by ../state/apiProtocols.ts. Ollama Cloud and
-// SenseAudio are intentionally omitted from this header surface because
-// they're more niche; the full Settings → BYOK dialog still exposes them.
-// Venice is included because a single Venice key covers chat + image +
-// video + audio in one slot — strictly broader surface area than any
-// other entry here. It sits last in the list so the existing four
-// providers keep their original click positions (we're additive, not
-// promotional, on the upstream chrome).
+// Venice Design fork — quick-switcher offers only Venice. One Venice
+// API key covers chat + image + video + audio, so there's no reason
+// to surface the upstream-style "pick a provider" pills on the chrome
+// bar. Settings → BYOK is similarly Venice-only on this fork (see
+// state/apiProtocols.ts).
 const API_PROTOCOL_TABS: Array<{ id: ApiProtocol; title: string }> = [
-  { id: 'anthropic', title: 'Anthropic' },
-  { id: 'openai', title: 'OpenAI' },
-  { id: 'azure', title: 'Azure' },
-  { id: 'google', title: 'Google' },
   { id: 'venice', title: 'Venice' },
 ];
 
