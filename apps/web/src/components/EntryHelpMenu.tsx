@@ -20,13 +20,23 @@ import {
 import { Icon } from './Icon';
 import { useT } from '../i18n';
 
-const REPO = 'https://github.com/nexu-io/open-design';
+// Venice Design fork — repo URL points at this fork, not the upstream
+// nexu-io/open-design. Issues, PR templates, releases, and the desktop
+// download all flow through the fork. If you sync from upstream and
+// they restructure the GitHub paths, this is the single constant to
+// update.
+const REPO = 'https://github.com/jordanurbs/venice-design';
 const ISSUES_URL = `${REPO}/issues/new`;
 const PRS_URL = `${REPO}/pulls`;
 const RELEASES_URL = `${REPO}/releases`;
 const LATEST_RELEASE_URL = `${REPO}/releases/latest`;
-const X_URL = 'https://x.com/nexudotio';
-const DISCORD_URL = 'https://discord.gg/mHAjSMV6gz';
+// Venice Design fork — the upstream X (`@nexudotio`) and Discord
+// (`discord.gg/mHAjSMV6gz`) community URLs are deliberately omitted.
+// They're nexu-io's community surfaces, not this fork's. The fork
+// can add its own Venice Design community CTAs here when they exist;
+// until then, the two menu items below (X follow + Discord join) are
+// dropped from the help popover so a fork user clicking through
+// doesn't land in someone else's community.
 
 const ext = { target: '_blank', rel: 'noreferrer noopener' } as const;
 
@@ -180,31 +190,14 @@ export function EntryHelpMenu() {
             </span>
             <span>{t('entry.helpDownloadDesktop')}</span>
           </a>
-          <div className="entry-help-popover__divider" aria-hidden />
-          <a
-            className="entry-help-popover__item"
-            href={X_URL}
-            {...ext}
-            role="menuitem"
-            onClick={() => setOpen(false)}
-          >
-            <span className="entry-help-popover__icon" aria-hidden>
-              <Icon name="external-link" size={14} />
-            </span>
-            <span>Follow @nexudotio on X</span>
-          </a>
-          <a
-            className="entry-help-popover__item"
-            href={DISCORD_URL}
-            {...ext}
-            role="menuitem"
-            onClick={() => setOpen(false)}
-          >
-            <span className="entry-help-popover__icon" aria-hidden>
-              <Icon name="discord" size={14} />
-            </span>
-            <span>Join Discord</span>
-          </a>
+          {/*
+            Venice Design fork — upstream renders "Follow @nexudotio on X"
+            and "Join Discord" below this divider. Both point at nexu-io's
+            community surfaces; neither belongs in a fork that hasn't
+            grown its own community. Add back here behind a fork-only
+            flag when Venice Design has its own X account / Discord
+            server / etc.
+          */}
         </div>
       ) : null}
     </div>
