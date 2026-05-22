@@ -112,7 +112,8 @@ export type TrackingByokProviderId =
   | 'azure_openai'
   | 'google_gemini'
   | 'ollama_cloud'
-  | 'senseaudio';
+  | 'senseaudio'
+  | 'venice';
 
 // v2 CLI provider catalogue (CSV row 63 + image 59). Adds `qoder_cli` and
 // `kilo` over v1.
@@ -1352,6 +1353,8 @@ export function byokProtocolToTracking(
       return 'ollama_cloud';
     case 'senseaudio':
       return 'senseaudio';
+    case 'venice':
+      return 'venice';
     default:
       return null;
   }
