@@ -31,7 +31,7 @@ Type **"design a magazine-style pitch deck for our seed round with custom hero i
 2. Five curated visual directions appear — pick one (Monocle / Modern Minimal / Tech Utility / Brutalist / Soft Warm) and you get a deterministic palette + font stack.
 3. A live `TodoWrite` plan streams into the UI.
 4. The agent generates HTML/CSS slides into a real on-disk project folder.
-5. **Inline media generation**: the agent calls `generate_image` for the hero art (Venice → `gpt-image-2` at 4K), `generate_video` for the intro reel (Venice → `seedance-2-0-text-to-video` with native audio), and `generate_speech` for narration (Venice → `gpt-4o-mini-tts`). All four happen in one conversation, on one API key.
+5. **Inline media generation**: the agent calls `generate_image` for the hero art (Venice → `gpt-image-2` at 4K), `generate_video` for the intro reel (Venice → `seedance-2-0-text-to-video` with native audio), and `generate_speech` for narration (Venice → `tts-kokoro`). All four happen in one conversation, on one API key.
 6. The sandboxed iframe shows the rendered artifact within seconds; one click exports to HTML, PDF, PPTX, ZIP, or MP4.
 
 ## Why a Venice fork?
@@ -40,8 +40,8 @@ The upstream Open Design supports 21 providers — including Venice as of [this 
 
 - **Venice is the default and pre-selected** chat protocol on first run.
 - **Settings → BYOK** opens on the Venice tab.
-- **Default model is `openai-gpt-55`** (Venice's slug for OpenAI's GPT-5.5 — strongest tool-calling on Venice's catalogue today); `claude-opus-4-7`, `qwen3-coder-480b`, `llama-3.1-405b`, `deepseek-v4-pro`, `venice-uncensored` all available in the dropdown.
-- **Media tabs (image / video / audio) default to Venice models** — `gpt-image-2` for image, `seedance-2-0-text-to-video` for video, `gpt-4o-mini-tts` for speech.
+- **Default model is `openai-gpt-55`** (Venice's slug for OpenAI's GPT-5.5 — strongest tool-calling on Venice's catalogue today); `claude-opus-4-7`, `qwen3-coder-480b-a35b-instruct-turbo`, `llama-3.1-405b`, `deepseek-v4-pro`, `venice-uncensored` all available in the dropdown.
+- **Media tabs (image / video / audio) default to Venice models** — `gpt-image-2` for image, `seedance-2-0-text-to-video` for video, `tts-kokoro` for speech.
 - **One-click Vercel deploy** with `VENICE_API_KEY` baked into the env-var prompt.
 - **Other 20 providers are still here** — just demoted from the headline. Users who need OpenAI direct, Volcengine, or Grok subscription billing can still configure them.
 
@@ -62,11 +62,11 @@ The full daemon + skill engine + 71 design systems + sandboxed iframe preview fr
 
 | Surface | Models you get with one Venice key |
 |---|---|
-| **Chat** | `openai-gpt-55`, `openai-gpt-55-pro`, `openai-gpt-54`, `openai-gpt-54-mini`, `openai-gpt-54-pro`, `openai-gpt-53-codex`, `openai-gpt-52`, `openai-gpt-4o-2024-11-20`, `claude-opus-4-7`, `claude-opus-4-7-fast`, `claude-opus-4-6`, `claude-opus-4-5`, `claude-sonnet-4-6`, `claude-sonnet-4-5`, `qwen3-coder-480b`, `qwen3-235b`, `llama-3.1-405b`, `deepseek-v4-pro`, `deepseek-r1`, `grok-4`, `mistral-31-24b`, `zai-org-glm-5`, `venice-uncensored` |
+| **Chat** | `openai-gpt-55`, `openai-gpt-55-pro`, `openai-gpt-54`, `openai-gpt-54-mini`, `openai-gpt-54-pro`, `openai-gpt-53-codex`, `openai-gpt-52`, `openai-gpt-4o-2024-11-20`, `claude-opus-4-7`, `claude-opus-4-7-fast`, `claude-opus-4-6`, `claude-opus-4-5`, `claude-sonnet-4-6`, `claude-sonnet-4-5`, `qwen3-coder-480b-a35b-instruct-turbo`, `qwen3-235b`, `llama-3.1-405b`, `deepseek-v4-pro`, `deepseek-r1`, `grok-4`, `mistral-31-24b`, `zai-org-glm-5`, `venice-uncensored` |
 | **Image (generate)** | `gpt-image-2`, `nano-banana-pro`, `nano-banana-2`, `qwen-image-2-pro`, `qwen-image-2`, `qwen-image`, `venice-sd35`, `flux-2-pro`, `flux-2-max`, `recraft-v4-pro`, `seedream-v5-lite`, `seedream-v4`, `grok-imagine` |
 | **Image (edit/inpaint)** | `qwen-edit`, `flux-2-max-edit`, `nano-banana-pro-edit`, `gpt-image-2-edit` |
 | **Video** | `wan-2.6-{t2v,i2v}`, `wan-2.5-preview-*`, `seedance-2-0-{t2v,i2v,r2v}` + `-fast-*`, `grok-imagine-{t2v,i2v}` + private variants, `topaz-video-upscale` |
-| **Speech (TTS)** | `gpt-4o-mini-tts`, `tts-chatterbox-hd` (voice cloning) |
+| **Speech (TTS)** | `tts-kokoro`, `tts-qwen3-0-6b`, `tts-xai-v1`, `tts-minimax-speech-02-hd`, `tts-chatterbox-hd` (voice cloning) |
 | **Web search + scrape** | Available via Venice; not yet surfaced in the UI (planned). |
 
 ## Configuration
@@ -100,10 +100,10 @@ node tests/manual/venice-smoke.mjs
 ```
 
 This exercises:
-1. `/chat/completions` against `openai-gpt-55`, `qwen3-coder-480b`, and `claude-opus-4-7` to verify tool-call accumulator handles OpenAI / open-source / Anthropic-translated streaming shapes.
+1. `/chat/completions` against `openai-gpt-55`, `qwen3-coder-480b-a35b-instruct-turbo`, and `claude-opus-4-7` to verify tool-call accumulator handles OpenAI / open-source / Anthropic-translated streaming shapes.
 2. `/image/generate` against `gpt-image-2` (resolution-tier) and `venice-sd35` (pixel) to confirm both sizing dispatches.
 3. `/video/queue` + `/video/retrieve` against `seedance-2-0-text-to-video` to confirm the async polling loop completes end-to-end against the real Venice API.
-4. `/audio/speech` against `gpt-4o-mini-tts`.
+4. `/audio/speech` against `tts-kokoro`.
 
 Estimated cost: ~$0.20 in Venice credits per full smoke run.
 

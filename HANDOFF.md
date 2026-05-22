@@ -212,7 +212,7 @@ SKIP_VIDEO=1 node tests/manual/venice-smoke.mjs
 node tests/manual/venice-smoke.mjs
 ```
 
-If any Layer-3 model fails (e.g. `qwen3-coder-480b` emits malformed JSON), you'll see exactly what was returned and can decide whether to drop it from the recommended-models list.
+If any Layer-3 model fails (e.g. `qwen3-coder-480b-a35b-instruct-turbo` emits malformed JSON), you'll see exactly what was returned and can decide whether to drop it from the recommended-models list.
 
 ### Manual UI walkthrough
 

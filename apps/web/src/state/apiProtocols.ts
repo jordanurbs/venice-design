@@ -104,7 +104,7 @@ export const SUGGESTED_MODELS_BY_PROTOCOL: Record<ApiProtocol, readonly string[]
     'claude-opus-4-5',
     'claude-sonnet-4-6',
     'claude-sonnet-4-5',
-    'qwen3-coder-480b',
+    'qwen3-coder-480b-a35b-instruct-turbo',
     'qwen3-235b',
     'llama-3.1-405b',
     'deepseek-v4-pro',

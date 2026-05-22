@@ -13,10 +13,10 @@ Adds **Venice** (https://docs.venice.ai) as a first-class BYOK provider in Open 
 
 | Surface | Examples |
 |---|---|
-| **Chat** (existing surface, new tab) | `openai-gpt-55`, `openai-gpt-54`, `openai-gpt-54-mini`, `openai-gpt-53-codex`, `openai-gpt-4o-2024-11-20`, `claude-opus-4-7`, `claude-opus-4-7-fast`, `claude-opus-4-6`, `claude-opus-4-5`, `claude-sonnet-4-6`, `claude-sonnet-4-5`, `qwen3-coder-480b`, `qwen3-235b`, `llama-3.1-405b`, `deepseek-v4-pro`, `deepseek-r1`, `grok-4`, `mistral-31-24b`, `zai-org-glm-5`, `venice-uncensored` (Venice uses period-stripped kebab-case for OpenAI versions: `openai-gpt-55` = GPT-5.5, `openai-gpt-54-mini` = 5.4 mini — verified live against Venice's `/v1/models` on 2026-05-22) |
+| **Chat** (existing surface, new tab) | `openai-gpt-55`, `openai-gpt-54`, `openai-gpt-54-mini`, `openai-gpt-53-codex`, `openai-gpt-4o-2024-11-20`, `claude-opus-4-7`, `claude-opus-4-7-fast`, `claude-opus-4-6`, `claude-opus-4-5`, `claude-sonnet-4-6`, `claude-sonnet-4-5`, `qwen3-coder-480b-a35b-instruct-turbo`, `qwen3-235b`, `llama-3.1-405b`, `deepseek-v4-pro`, `deepseek-r1`, `grok-4`, `mistral-31-24b`, `zai-org-glm-5`, `venice-uncensored` (Venice uses period-stripped kebab-case for OpenAI versions: `openai-gpt-55` = GPT-5.5, `openai-gpt-54-mini` = 5.4 mini — verified live against Venice's `/v1/models` on 2026-05-22) |
 | **Image** | `gpt-image-2`, `nano-banana-pro`, `nano-banana-2`, `qwen-image-2-pro/-2/-image`, `venice-sd35`, `flux-2-pro/-max`, `seedream-v4/-v5-lite`, `recraft-v4-pro`, `grok-imagine`, plus the `*-edit` family (`qwen-edit`, `gpt-image-2-edit`, `nano-banana-pro-edit`, `flux-2-max-edit`) |
 | **Video** | `wan-2.6-{t2v,i2v}`, `wan-2.5-preview-*`, `seedance-2-0-{t2v,i2v,r2v}` + `*-fast-*`, `grok-imagine-{t2v,i2v}` + private variants, `topaz-video-upscale` |
-| **Speech (TTS)** | `gpt-4o-mini-tts`, `tts-chatterbox-hd` (voice cloning) |
+| **Speech (TTS)** | `tts-kokoro`, `tts-qwen3-0-6b`, `tts-xai-v1`, `tts-minimax-speech-02-hd`, `tts-chatterbox-hd` (voice cloning) |
 
 This means a user no longer needs to keep credentials for OpenAI + Anthropic + ByteDance + xAI + Google to get full Open Design coverage — one Venice key replaces all of them.
 
@@ -140,4 +140,4 @@ A user on `main` who never picks the Venice tab will see zero behaviour change.
 - [ ] Manual: paste a Venice API key into Settings → Venice tab, send *"make me a 16:9 hero image of a Venice canal at blue hour"* → verify the `![image](…)` URL serves a real PNG from the project folder.
 - [ ] Manual: from a Venice chat session, ask for *"a 5s video of the same scene with audio"* → daemon polls `/video/retrieve` until the mp4 lands, chat UI shows `[▶ Play video](…)`.
 - [ ] Manual: `od media generate --surface image --model venice/gpt-image-2 --prompt "…" --output venice.png` against a workspace whose `media-config.json` was seeded by the chat proxy → image lands on disk.
-- [ ] Layer-3 multi-LLM tool-injection sweep against real Venice key: see `tests/manual/venice-smoke.mjs` in the companion fork at `jordanurbs/venice-design` — runs the tool-injected chat against `gpt-5`, `claude-opus-4-5`, and `qwen3-coder-480b` to confirm Venice's translation layer produces parseable OpenAI-shape `tool_calls` for all three.
+- [ ] Layer-3 multi-LLM tool-injection sweep against real Venice key: see `tests/manual/venice-smoke.mjs` in the companion fork at `jordanurbs/venice-design` — runs the tool-injected chat against `openai-gpt-55`, `claude-opus-4-7`, and `qwen3-coder-480b-a35b-instruct-turbo` to confirm Venice's translation layer produces parseable OpenAI-shape `tool_calls` for all three.

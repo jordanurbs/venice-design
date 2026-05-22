@@ -11,7 +11,7 @@
  *     same tool-injected chat against three representative upstream models:
  *       * gpt-5            → OpenAI canonical tool_calls streaming
  *       * claude-opus-4-5  → Anthropic tool_use → OpenAI shape translation
- *       * qwen3-coder-480b → open-source model on Venice
+ *       * qwen3-coder-480b-a35b-instruct-turbo → open-source model on Venice
  *     Each must successfully call the `generate_image` tool and return a
  *     PNG URL.
  *
@@ -110,7 +110,7 @@ const CHAT_MODELS = [
   'claude-opus-4-7',
   // Open-source coder model — historically the most likely to emit
   // malformed tool_calls arguments.
-  'qwen3-coder-480b',
+  'qwen3-coder-480b-a35b-instruct-turbo',
 ];
 
 async function streamChatWithTool(model) {
@@ -367,9 +367,9 @@ async function runTTS() {
       method: 'POST',
       headers: HEADERS,
       body: JSON.stringify({
-        model: 'gpt-4o-mini-tts',
+        model: 'tts-kokoro',
         input: 'Welcome to Venice Design.',
-        voice: 'alloy',
+        voice: 'af_sky',
         response_format: 'mp3',
       }),
     });
@@ -380,9 +380,9 @@ async function runTTS() {
     if (bytes.length === 0) throw new Error('zero bytes');
     const file = path.join(OUT_DIR, 'venice-tts.mp3');
     await writeFile(file, bytes);
-    pass(`tts via gpt-4o-mini-tts`, `${Date.now() - t0}ms, ${bytes.length} bytes → ${file}`);
+    pass(`tts via tts-kokoro`, `${Date.now() - t0}ms, ${bytes.length} bytes → ${file}`);
   } catch (err) {
-    fail('tts via gpt-4o-mini-tts', err);
+    fail('tts via tts-kokoro', err);
   }
 }
 
