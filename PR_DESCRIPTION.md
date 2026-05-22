@@ -20,11 +20,28 @@ Adds **Venice** (https://docs.venice.ai) as a first-class BYOK provider in Open 
 
 This means a user no longer needs to keep credentials for OpenAI + Anthropic + ByteDance + xAI + Google to get full Open Design coverage — one Venice key replaces all of them.
 
-## Why
+## Why Venice (not "yet another provider")
 
-- Venice is **fully OpenAI-compatible** on `/chat/completions` (docs.venice.ai/api-reference/api-spec), so it slots neatly into the existing BYOK proxy pattern.
-- Its native `/image/generate`, `/video/queue` + `/video/retrieve`, and OpenAI-compatible `/audio/speech` endpoints let us reuse the same architecture as the SenseAudio provider — a dedicated `/api/proxy/venice/stream` route that injects `generate_image` / `generate_video` / `generate_speech` tool definitions and dispatches them daemon-side.
-- Avoids the failure mode where a user can run chat on Venice (via the OpenAI proxy with a custom `baseUrl`) but has to switch providers for media — now the media surfaces (image tab, video tab, TTS) all see Venice as a real provider.
+Open Design is **local-first, BYOK at every layer**. The README's pitch — "no checkout, no cloud lock-in, no proprietary inference layer" — needs a chat/media backend that matches that ethos. Venice is the only major commercial inference provider whose own product positioning aligns 1:1 with the project's:
+
+| Open Design value | Venice's matching guarantee |
+|---|---|
+| Local-first, your machine, your data | **Zero data retention.** Venice's own positioning is "privacy-first, uncensored AI API platform … with zero data retention" (docs.venice.ai). The same language appears endpoint-by-endpoint — e.g. `/augment/text-parser`: *"Text parsing runs entirely in-memory on Venice's infrastructure with zero data retention. Documents are processed and immediately discarded — no content is stored or logged."* |
+| BYOK at every layer; no proprietary inference | **OpenAI-compatible at `https://api.venice.ai/api/v1`.** Drop-in replacement for `api.openai.com`; the existing OD chat surface and skill-driven design loop work unchanged. |
+| Sandboxed preview, no surveillance | **Optional TEE + E2EE.** Venice's `tee-*` model family runs inside Intel TDX / NVIDIA Confidential Computing enclaves with **cryptographic attestation** (`GET /tee/attestation?model=…` returns a verifiable report) — the model can't be inspected or modified, *not even by Venice*. `e2ee-*` adds **client-side encryption with ephemeral key pairs** on top of TEE: your prompts are encrypted on your machine before they leave; only the enclave can decrypt them. For an open-source local-first design studio handling client briefs and unreleased product designs, this is the strongest privacy posture available on any commercial inference API today. |
+| Anonymous, no account required | **x402 wallet auth.** Top up credits with a USDC payment over an Ethereum wallet (`POST /x402/top-up`); no email, no account, no profile. Bearer-token API key auth still works for everyone else. |
+| Composable, swappable, no vendor lock | **One key, ~230 multimodal models.** See the table below — chat (GPT-5 / Claude Opus 4.7 / Qwen3-Coder 480B / Llama 3.1 405B / DeepSeek V4-Pro / Grok-4 / Mistral / GLM-5 / venice-uncensored), image (`gpt-image-2`, `nano-banana-pro`, FLUX 2, Seedream v5, Recraft, Grok Imagine, SD3.5), video (Wan 2.6, Seedance 2.0 with native audio, Grok Imagine, Topaz upscale), and OpenAI-compatible TTS — all behind one API key. Open Design users no longer need OpenAI + Anthropic + Volcengine + xAI + Google + ByteDance credentials to get the same coverage. |
+| Web-aware design (browse → cite) | **Anonymized search + scrape.** Venice's `/augment/search` proxies through Brave (Zero Data Retention) or Google with anonymized queries (the search provider never sees who asked). Not yet surfaced in the OD UI — flagged as a follow-up. |
+
+The "uncensored" angle isn't pure marketing either: design work routinely runs into overly-cautious refusals from frontier models on stylistic asks (*"draw a futuristic poster in the style of Frank Frazetta"* — boom, refused). Venice's default system prompts are tuned away from that without removing the safety floor (`safe_mode` still defaults to on for image gen).
+
+## Why an explicit `venice` protocol (not just OpenAI-compat)
+
+A user *can* already route Venice through the existing OpenAI proxy by typing `https://api.venice.ai/api/v1` into the OpenAI tab's Base URL. That works for chat-only. Three reasons this PR adds a dedicated protocol anyway:
+
+- Venice has **native multimodal endpoints** that aren't OpenAI-compatible at all: `/image/generate` (Venice's richer image surface with `style_preset`, `safe_mode`, `cfg_scale`, `variants`, `negative_prompt`), `/video/queue` + `/video/retrieve` (the async polling protocol for Wan 2.6 / Seedance 2.0 / Grok Imagine), and `/audio/voices` (voice cloning handles). Routing these through Venice's own `venice/<slug>` catalogue ids means the design agent gets *more* capability, not less, vs. the OpenAI-compat fallback.
+- Routing chat through a Venice-specific proxy lets the daemon **inject `generate_image` / `generate_video` / `generate_speech` tools** backed by Venice's own media endpoints — same pattern as the existing SenseAudio path. The LLM running on Venice's chat completions can render images and videos inline mid-conversation, on the same API key, with the rendered file persisted into the active project's folder.
+- Avoids the failure mode where a user runs chat on Venice (via the OpenAI proxy with a custom `baseUrl`) but has to switch providers for media. Now the image / video / TTS surfaces all see Venice as a first-class provider.
 
 ## What's in the PR
 

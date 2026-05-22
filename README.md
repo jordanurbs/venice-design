@@ -6,6 +6,23 @@
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fjordanurbs%2Fvenice-design&env=VENICE_API_KEY&envDescription=Get%20your%20key%20at%20venice.ai%2Fsettings%2Fapi&envLink=https%3A%2F%2Fvenice.ai%2Fsettings%2Fapi&project-name=venice-design&repository-name=venice-design)
 
+## Why Venice
+
+A design studio sees your unreleased client briefs, your in-progress brand work, your private campaign assets — *all the things you would not put on a public AI chat*. Venice Design pairs a local-first, sandboxed design app with the only commercial inference provider whose privacy posture actually matches that use case:
+
+- **Zero data retention.** Venice's whole product is *"privacy-first … zero data retention"* ([docs.venice.ai](https://docs.venice.ai)). Prompts, completions, and the images / videos / audio you generate are never stored or logged by Venice — same on every endpoint, no asterisks.
+- **Optional TEE + E2EE for the sensitive stuff.** Pick a `tee-*` model and your inference runs inside an Intel TDX / NVIDIA Confidential Computing enclave with [cryptographic attestation](https://docs.venice.ai/api-reference/endpoint/tee/attestation) — verifiable proof Venice's own infrastructure cannot see your prompts. `e2ee-*` adds client-side encryption with ephemeral key pairs on top. Strictly stronger guarantees than any other commercial API today.
+- **Uncensored design output.** Design work hits frontier-model refusals constantly (*"in the style of Frank Frazetta"* — refused; *"a Tarantino-style poster"* — refused). Venice's defaults are tuned away from over-cautious refusals without removing the safety floor. `safe_mode` still defaults to on for image gen.
+- **One key, ~230 multimodal models.** Stop juggling OpenAI + Anthropic + ByteDance + xAI + Google + ElevenLabs keys. A single Venice API key drives:
+  - **Chat**: GPT-5 / GPT-5-mini / GPT-4o, Claude Opus 4.5 / 4.6 / 4.7, Qwen3-Coder 480B, Qwen3 235B, Llama 3.1 405B, DeepSeek V4-Pro / R1, Grok-4, Mistral 31-24B, GLM-5, `venice-uncensored`.
+  - **Image**: `gpt-image-2`, `nano-banana-pro` / `-2`, `qwen-image-2-pro` / `-2` / `-image`, `venice-sd35`, FLUX 2 Pro / Max, Seedream v4 / v5-lite, Recraft v4 Pro, Grok Imagine — plus the full `*-edit` family for inpaint (`qwen-edit`, `gpt-image-2-edit`, `nano-banana-pro-edit`, `flux-2-max-edit`).
+  - **Video**: Wan 2.6 (text → video / image → video with native audio), Seedance 2.0 (text / image / reference → video, plus fast tiers), Grok Imagine (with private download URLs for sensitive clips), Topaz video upscale.
+  - **Speech**: OpenAI-compatible TTS plus `tts-chatterbox-hd` with voice cloning.
+- **Anonymous x402 wallet auth.** Don't even want an account? Top up credits with a USDC payment over an Ethereum wallet — no email, no profile. Bearer API keys still work for everyone else.
+- **Anonymized web search + scrape.** Venice's `/augment/search` proxies through Brave (Zero Data Retention) or Google with anonymized queries — the search provider never sees who asked. (Not yet surfaced in the UI; coming soon.)
+
+It's not "Open Design plus a Venice tab" — it's an opinionated design studio that assumes you care about who sees your client work.
+
 ## What it does
 
 Type **"design a magazine-style pitch deck for our seed round with custom hero illustrations and a 5-second intro reel"** and watch:
