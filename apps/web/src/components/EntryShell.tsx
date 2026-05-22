@@ -54,7 +54,6 @@ import { DesignsTab } from './DesignsTab';
 import { DesignSystemPreviewModal } from './DesignSystemPreviewModal';
 import { DesignSystemsTab } from './DesignSystemsTab';
 import { EntryNavRail, type EntryView as EntryViewKind } from './EntryNavRail';
-import { GithubStarBadge } from './GithubStarBadge';
 import { HomeView } from './HomeView';
 import {
   createPluginAuthoringHandoff,
@@ -524,17 +523,15 @@ export function EntryShell({
         <main className="entry-main entry-main--scroll">
           <div className="entry-main__topbar">
             <div className="entry-main__topbar-chips">
-              <GithubStarBadge />
-              <a
-                className="entry-discord-badge"
-                href="https://discord.gg/mHAjSMV6gz"
-                aria-label="Join the Open Design Discord"
-                title="Join the Open Design Discord"
-                data-testid="entry-discord-badge"
-              >
-                <Icon name="discord" size={14} className="entry-discord-badge__icon" />
-                <span className="entry-discord-badge__label">Join Discord</span>
-              </a>
+              {/*
+                Venice Design fork — the upstream <GithubStarBadge /> and
+                "Join Discord" chip pointed at nexu-io/open-design and
+                their Discord server. They're community-CTAs for the
+                upstream project, not for this fork; removing them keeps
+                the chrome bar focused on the user's own work. If/when
+                the fork grows its own community surfaces, plumb them in
+                here behind a fork-only flag.
+              */}
               <InlineModelSwitcher
                 config={config}
                 agents={agents}
