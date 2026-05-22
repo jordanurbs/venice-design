@@ -59,16 +59,19 @@ export const DEFAULT_ORBIT: OrbitConfig = {
 export const DEFAULT_CONFIG: AppConfig = {
   mode: 'daemon',
   apiKey: '',
-  baseUrl: 'https://api.anthropic.com',
-  model: 'claude-sonnet-4-5',
-  // New configs should be explicit. loadConfig() still detects parsed legacy
-  // saved configs that did not have this field and migrates those from their
-  // saved baseUrl/model before applying the current migration version.
-  apiProtocol: 'anthropic',
+  // Venice Design fork — defaults route through Venice's OpenAI-compatible
+  // gateway so first-run users land directly on the venice tab in Settings
+  // and the new-project picker. Upstream open-design defaults to Anthropic;
+  // we diverge here and only here on the chat-protocol default so the rest
+  // of the project file (preset table, host inference, migration logic)
+  // continues to merge cleanly from upstream.
+  baseUrl: 'https://api.venice.ai/api/v1',
+  model: 'gpt-5',
+  apiProtocol: 'venice',
   apiVersion: '',
   apiProtocolConfigs: {},
   configMigrationVersion: CONFIG_MIGRATION_VERSION,
-  apiProviderBaseUrl: 'https://api.anthropic.com',
+  apiProviderBaseUrl: 'https://api.venice.ai/api/v1',
   agentId: null,
   skillId: null,
   designSystemId: null,

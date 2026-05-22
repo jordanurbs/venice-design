@@ -172,13 +172,18 @@ export const API_PROTOCOL_TABS: ReadonlyArray<{
   id: ApiProtocol;
   title: string;
 }> = [
+  // Venice Design fork — Venice is the headline tab so first-run users
+  // see it pre-selected. Upstream open-design orders by provider age
+  // (anthropic first). Order divergence is the entire mechanism by
+  // which the fork brands itself "for Venice users" without touching
+  // any of the underlying provider logic.
+  { id: 'venice', title: 'Venice' },
   { id: 'anthropic', title: 'Anthropic' },
   { id: 'openai', title: 'OpenAI' },
   { id: 'azure', title: 'Azure OpenAI' },
   { id: 'google', title: 'Google Gemini' },
   { id: 'ollama', title: 'Ollama Cloud' },
   { id: 'senseaudio', title: 'SenseAudio' },
-  { id: 'venice', title: 'Venice' },
 ];
 
 export const API_PROTOCOL_LABELS: Record<ApiProtocol, string> = {
